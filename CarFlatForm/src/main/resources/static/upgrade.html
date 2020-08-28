@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>车载系统临时后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <script src="jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统临时后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item" ><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item"><a href="routems.html">路线管理</a></li>
+        <li class="layui-nav-item"><a href="routeexecute.html">路线运行</a></li>
+        <li class="layui-nav-item"><a href="videoreview.html">本地回放</a></li>
+        <li class="layui-nav-item    layui-this"><a href="upgrade.html">远程更新</a></li>
+      	<li class="layui-nav-item"><a href="log.html">远程日记</a></li>
+      	<li class="layui-nav-item"><a href="gps.html">gps记录</a></li>
+      	<li class="layui-nav-item"><a href="errlog.html">错误日记</a></li>         
+      </ul>
+    </div>
+  </div>
+  <div class="layui-body" id="app">
+
+			<div style="height: 100%;">
+				<center>
+					<h3>
+						<!-- 全局版本 <label style="font-size:20px;color:green"> {{global.version}} </label> 
+						升级时间 <label  style="font-size:20px;color:green">{{global.creation}} </label> -->
+						一共辆<label style="font-size:20px;color:green">{{record.length}}</label>车，
+						在线车辆共<label style="font-size:20px;color:green" >{{onlinecount}}</label>台
+					</h3>
+				</center>
+				
+				
+				
+				<!-- <div style="display: none">
+					<input type="file" id="globalfileinput" @change="globalFileChange" />
+				</div>
+				
+				<label>版本号</label>
+				<div class="layui-inline">
+					<input class="layui-input"  v-model="global.version" />
+				</div>
+				<label>内容长度</label>
+				 <select lay-verify="" v-model="global.hasContentLength"
+								class="layui-select" style="width: 100px;">
+									<option value="Y">返回</option>
+									<option value="N">不返回</option>
+				</select>
+				<button  class="layui-btn" @click="uploadGlobal">全局上传</button>
+				<label style="color:red">注：优先使用每台设备的独立程序升级，独立程序不存在，则使用全局程序进行升级。所以全局程序相当于备份。</label>
+				
+				<br/>
+				<label>升级状态</label>
+				<select lay-verify="" v-model="global.upgrade" class="layui-select"
+					style="width: 100px;">
+					<option value="Y">待升级</option>
+					<option value="N">已升级</option>
+				</select>
+				<button  class="layui-btn" @click="updateAllDeviceStatus">全部更新</button>
+				<label style="color:red">注：该功能只修改所有设备的升级状态。</label> -->
+				
+				
+				
+				
+				<div style="display: none">
+					<input type="file" @change="singleFileChange" id="singleInputFile" />
+				</div>
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th>操作</th>
+							<th >车载主机编号</th>
+							<th >安装信息</th>
+							<th>车牌号</th>
+							<th>车型</th>
+							<th>在线状态</th>
+							<th>升级状态</th>
+							<th>内容长度</th>
+							<th>版本号</th>
+							<th>升级时间</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(value, key, index) in record">
+							<td>
+								<button style="background-color:#009688;height:30px;color:white;"  @click="updateSingleStatus(value)">更新信息</button>
+								<button style="background-color:#009688;height:30px;color:white;"   @click="uploadSingle(value)">单台上传</button>
+								<br/><br/>
+								<button style="background-color:#009688;height:30px;color:white;"  @click="rebootDevice(value.devId)">重启设备</button>
+								<button style="background-color:#009688;height:30px;color:white;"   @click="triggleUpgrade(value.devId)">升级设备</button>
+							</td>
+							<td>{{value.devId}}</td>
+							<th >
+							    <textarea class="layui-textarea"  v-model="value.detailinfo" ></textarea>
+							</th>
+							<td><input v-model="value.carNum" class="layui-input" style="width:100px;"/></td>
+							<td>
+								<select  v-model="value.carType"
+								class="layui-select" style="width: 60px;">
+									<option value="big">大车</option>
+									<option value="small">小车</option>
+								</select></td>
+							<td>{{value.online=='Y'?"在线" :"离线"}}</td>
+							<td>
+								<select  v-model="value.upgrade" class="layui-select" style="width: 80px;">
+									<option value="Y">待升级</option>
+									<option value="N">已升级</option>
+								</select>
+							</td>
+							<td><select   v-model="value.hasContentLength" class="layui-select" style="width:80px;">
+									<option value="Y">返回</option>
+									<option value="N">不返回</option>
+							</select></td>
+							<td>{{value.version}}</td>
+							<td style="width: 100px;">{{value.creation}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+</div>
+
+<script>
+
+let upload=function(file,url,callback){
+	var formdata = new FormData();
+	   formdata.append("file",file);
+	   $.ajax({
+			url:url,
+			method:"POST",
+			cache: false,
+	        data: formdata,
+	        processData: false,
+	        contentType: false,
+			success:function(rs){
+	        	callback(rs);
+			},
+			error:function(rs){
+				console.error(rs);
+				alert("上传失败");
+			}
+		});
+}
+
+let app = new Vue({
+	  el: '#app',
+	  data: {
+		  onlinecount:0,
+		  record:[],
+		  global:{},
+		  currentUploadDevice:null,
+		  totaldetail:""
+		  
+	  },
+	  mounted(){
+		 this.initTable();
+	  },
+	  methods:{
+		 triggleUpgrade(devId){
+
+
+			    let _this = this;
+			    let account = window.prompt("请输入账号");
+				let password = window.prompt("请输入密码");
+				if(!account || !password){
+					alert("请输入用户名或密码");
+					return;
+				}
+				
+				 
+				$.post("upgrade/beforeupload.action",{account,password},(rs)=>{
+					if(rs.code ==0 ){
+						sendMsg();
+					}else{
+						alert(rs.error);
+					}
+				});
+				
+				let sendMsg=function(){
+				   $.post("upgrade/upgradecheck.action",{
+					   account,password,devId
+				   },(rs)=>{
+					   if(rs.code ==0 ){
+						   alert(rs.success);
+						}else{
+							alert(rs.error);
+						}
+				   });
+				} 
+		 },
+		 rebootDevice(devId){
+
+			    let _this = this;
+			    let account = window.prompt("请输入账号");
+				let password = window.prompt("请输入密码");
+				if(!account || !password){
+					alert("请输入用户名或密码");
+					return;
+				}
+				
+				 
+				$.post("upgrade/beforeupload.action",{account,password},(rs)=>{
+					if(rs.code ==0 ){
+						sendMsg();
+					}else{
+						alert(rs.error);
+					}
+				});
+				
+				let sendMsg=function(){
+				   $.post("upgrade/rebootdevice.action",{
+					   account,password,devId
+				   },(rs)=>{
+					   if(rs.code ==0 ){
+						   alert(rs.success);
+						}else{
+							alert(rs.error);
+						}
+				   });
+				} 
+		 },
+		  initTable(){
+			  let _this = this;
+			  $.get("upgrade/record.action",function(rs){
+				  console.info(rs);
+				  _this.record = rs.record;
+				  _this.global = rs.version;
+				  _this.onlinecount = rs.count;
+			});
+		  },
+		 
+		  uploadGlobal(){
+			  $("#globalfileinput").click();
+		  },
+		  //全局上传改变事件。
+		  globalFileChange(e){
+			    if(!e.target.value || !e.target.files || !e.target.files[0])return;
+			    let file = e.target.files[0];
+				e.target.value = "";
+
+				 if(!this.global.hasContentLength){
+					 alert("请设置内容长度");
+					 return;
+				 }
+				 if(!this.global.version){
+					 alert("请输入版本号");
+					 return;
+				 }
+				 
+
+			    let _this = this;
+			    let account = window.prompt("请输入账号");
+				let password = window.prompt("请输入密码");
+					
+				if(!account || !password){
+					alert("请输入用户名或密码");
+					return;
+				}
+				
+				 
+				$.post("upgrade/beforeupload.action",{account,password},(rs)=>{
+					if(rs.code ==0 ){
+						realupload();
+					}else{
+						alert(rs.error);
+					}
+				});
+				
+				let realupload=function(){
+						upload(file,
+								"upgrade/uploadglobal.action?"
+										+"account="+encodeURIComponent( account )  
+										+"&password="+encodeURIComponent( password )
+										+"&version="+ encodeURIComponent( _this.global.version ) 
+										+"&hasContentLength="+ encodeURIComponent( _this.global.hasContentLength ) 
+										,
+							function(rs){
+						 	if(rs.code == 0 ){
+						 		alert(rs.success);
+						 	}else{
+						 		alert(rs.error );
+						 	}
+							location.reload();
+						});   
+				}
+		  },
+		  //更新所有设备的升级状态。
+		  updateAllDeviceStatus(){
+			    let _this = this;
+			    let account = window.prompt("请输入账号");
+				let password = window.prompt("请输入密码");
+					
+				if(!account || !password){
+					alert("请输入用户名或密码");
+					return;
+				}
+				
+				$.post("upgrade/beforeupload.action",{account,password},(rs)=>{
+					if(rs.code ==0 ){
+						realupload();
+					}else{
+						alert(rs.error);
+					}
+				});
+			  let realupload =()=>{
+				 $.post("upgrade/updateAllDeviceStatus.action",{
+					 upgrade:_this.global.upgrade
+				 },()=>{
+					 location.reload();
+				 });
+			  }
+		  },
+		  //更新单台设备的升级状态。
+		  updateSingleStatus(value){
+			    let _this = this;
+			    let account = window.prompt("请输入账号");
+				let password = window.prompt("请输入密码");
+				 
+				if(!account || !password){
+					alert("请输入用户名或密码");
+					return;
+				}
+				
+				$.post("upgrade/beforeupload.action",{account,password},(rs)=>{
+					if(rs.code ==0 ){
+						realupload();
+					}else{
+						alert(rs.error);
+					}
+				});
+				
+				let realupload =()=>{
+					$.post("upgrade/updateAllDeviceStatus.action",value,()=>{
+						 location.reload();
+					 });
+				}
+		  },
+		  uploadSingle(value){
+			  this.currentUploadDevice = value;
+			  $("#singleInputFile").click();
+		  },
+		  //单台设备文件上传改变事件。
+		  singleFileChange(e){
+			  	if(!e.target.value || !e.target.files || !e.target.files[0])return;
+			  	let file = e.target.files[0];
+			 	e.target.value = "";
+				
+			 	if(!this.currentUploadDevice.version){
+					alert("请填写版本号");
+					return;
+				}
+				if(!this.currentUploadDevice.hasContentLength){
+					alert("请设置内容长度");
+					return;
+				}
+				if(!this.currentUploadDevice.devId){
+					alert("设备编号为空。请联系管理员");
+					return;
+				}
+				
+			    let _this = this;
+			    let account = window.prompt("请输入账号");
+				let password = window.prompt("请输入密码");
+				
+				if(!account || !password){
+					alert("请输入用户名或密码");
+					return;
+				}
+				
+				$.post("upgrade/beforeupload.action",{account,password},(rs)=>{
+					if(rs.code ==0 ){
+						realupload();
+					}else{
+						alert(rs.error);
+					}
+				});
+				
+				
+				let realupload=function(){
+						upload(file,
+								"upgrade/uploadsingle.action?"
+										+"account="+encodeURIComponent( account )  
+										+"&password="+encodeURIComponent( password )
+										+"&version="+ encodeURIComponent( _this.currentUploadDevice.version ) 
+										+"&hasContentLength="+_this.currentUploadDevice.hasContentLength
+										+"&devId="+ encodeURIComponent( _this.currentUploadDevice.devId )
+										,
+							function(rs){
+						 	if(rs.code == 0 ){
+						 		alert(rs.success);
+						 	}else{
+						 		alert(rs.error );
+						 	}
+							location.reload();
+						});   
+				}
+			  
+		  }
+	  } 
+	});
+</script>
+</body>
+</html>
+      

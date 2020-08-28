@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smokeroom.mapper.OBDMapper">
+ 
+ 
+<insert id="insert" parameterType="OBDRecord">
+ 	insert into obd(timestamp,devId,speed,lat,lng,src,gpsplain)values(#{timestamp},#{devId},#{speed},#{lat},#{lng},#{src},#{gpsplain} );
+ </insert>
+
+
+<select id="query" parameterType="OBDRecordQueryModel" resultType="OBDRecord">
+		select * from obd where 1
+		<if test="devId!= null and devId!=''">
+			and devId=#{devId}
+		</if> 
+		<if test="timestamp!= null and timestamp!='' and timestamp2!= null and timestamp2!=''">
+			and timestamp &gt;= #{timestamp} and timestamp &lt;= #{timestamp2}
+		</if> 
+		order by timestamp 
+		limit 0,2500
+		
+</select>
+
+</mapper>

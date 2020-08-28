@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>车载系统后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <script type="text/javascript" src="layui/layui.js"></script>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+ <style>
+ tbody .layui-table-cell{
+    height:150px;
+    line-height: 150px;
+}
+.layui-table thead tr{
+	height:40px;
+}
+ </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item   layui-this"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item" ><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item"><a href="routems.html">路线管理</a></li>
+        <li class="layui-nav-item"><a href="routeexecute.html">路线运行</a></li>
+        <li class="layui-nav-item"><a href="videoreview.html">本地回放</a></li>
+        <li class="layui-nav-item"><a href="upgrade.html">远程更新</a></li>
+      	<li class="layui-nav-item"><a href="log.html">远程日记</a></li>
+      	<li class="layui-nav-item"><a href="gps.html">gps记录</a></li>
+      	<li class="layui-nav-item"><a href="errlog.html">错误日记</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="layui-body" id="app">
+  
+    <div >
+		<table id="eventtable" lay-filter="eventtable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+    let app = new Vue({
+	  el: '#app',
+	  data: {
+		  eventList:[]
+	  },
+	  data(){
+		  return {
+			  
+		  }
+	  },
+	  mounted(){
+		  this.initTable();
+	  },
+	  methods:{
+		  initTable(){
+			  let _this = this;
+			  layui.use('table', function(){
+				  let table = layui.table;
+				  //第一个实例
+				  table.render({
+				    elem: '#eventtable'
+				    ,url: '/carmonitorsys/video/behavior.action' //数据接口
+				    ,page: true //开启分页
+				    ,cols: [[ //表头
+				      {field: 'devId', title: '设备编号' }
+				      ,{field: 'timestamp', title: '报警时间'}
+				      ,{field: 'speed', title: '原始速度'}
+				      ,{field: 'lng', title: 'lng'}
+				      ,{field: 'lat', title: 'lat'}
+				      ,{field: 'behavior', title: '违规类型',templet(item){
+				    	 let str = "";
+				 		 if( item.behavior.charAt(0) == "1" ){
+				 			 str += "未系安全带|";
+				 		 } 
+				 		 if( item.behavior.charAt(1)  == "1" ){
+				 			 str += "行车打电话|";
+				 		 } 
+				 		 if( item.behavior.charAt(2) == "1"){
+				 			 str += "疲劳驾驶|";
+				 		 }
+				 		 if( item.behavior.charAt(3) == "1"){
+				 			 str += "抽烟|";
+				 		 }
+				 		 if( item.behavior.charAt(4) == "1"){
+				 			 str += "故意遮挡";
+				 		 }
+				 		 return str;
+				      }}
+				      ,{field: 'videostr', title: '关联视频', width:220,templet(r){
+				    	  
+				    	   return `<video  src="${r.videostr}" controls="controls"  style="width:200px;" ></video>`;
+				      }
+				      },{field: 'imagestr', title: '关联画面', width:220,templet(r){
+				    	  
+				    	   return `<img src="${r.imagestr}" style="width:200px;" />`;
+				      }}
+				      
+				    ]]
+				  });
+				  
+				  _this.table = table;
+				});
+		  }
+	  }
+	});
+ 
+</script>
+</body>
+</html>
+      

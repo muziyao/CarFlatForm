@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>车载系统后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <script type="text/javascript" src="jquery/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=U8sdm8dTbG5frQNg87IxYtY7OeEoyYOf"></script>
+	<style type="text/css">
+		#l-map{height:600px;width:100%;}
+		#r-result{width:100%;}
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+      
+        <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item" ><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item   layui-this"><a href="routems.html">路线管理</a></li>
+        <li class="layui-nav-item"><a href="routeexecute.html">路线运行</a></li>
+        <li class="layui-nav-item"><a href="videoreview.html">本地回放</a></li>
+        <li class="layui-nav-item"><a href="upgrade.html">远程更新</a></li>
+      	<li class="layui-nav-item"><a href="log.html">远程日记</a></li>
+      	<li class="layui-nav-item"><a href="gps.html">gps记录</a></li>   
+       	<li class="layui-nav-item"><a href="errlog.html">错误日记</a></li>
+        
+      </ul>
+    </div>
+  </div>
+  <div class="layui-body">
+    <div style="padding: 15px;">
+    
+		<div id="r-result"  >
+			<input class="layui-input" id="start_input" value="贵阳市金融城" style="display:inline-block;width:120px;"/>
+			<input class="layui-input" id="target_input" value="凯里市烟草局" style="display:inline-block;width:120px;" />
+			 <button onclick="searchRoute()" class="layui-btn">搜索</button>
+			<button class="layui-btn" style="background: #1E9FFF" onclick="setFlag('speedlimit')">添加限速区域</button>
+			<button class="layui-btn" style="background: #FF5722"  onclick="setFlag('danger')">添加危险区域</button>
+			<button class="layui-btn" style="background: #d2d2d2"   onclick="setFlag('prohibitarea')">添加禁止区域</button>
+			<button class="layui-btn" onclick="setFlag('parkingarea')">添加停靠站点</button>
+			<button class="layui-btn" onclick="buildData()">生成数据</button>
+			<button class="layui-btn" onclick="clearFlag()">清除标记</button>
+			<button class="layui-btn" onclick="saveFile()">保存路线</button>
+			
+		</div>
+		 <div id="l-map"   ></div>
+    </div>
+  </div>
+</div>
+<script src="layui/layui.js"></script>
+<script type="text/javascript" src="service/routems.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('element', function(){
+  var element = layui.element;
+
+});
+</script>
+</body>
+</html>
+
+      

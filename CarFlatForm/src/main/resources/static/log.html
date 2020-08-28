@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>车载系统临时后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <script src="jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统临时后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+            <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item" ><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item"><a href="routems.html">路线管理</a></li>
+        <li class="layui-nav-item"><a href="routeexecute.html">路线运行</a></li>
+        <li class="layui-nav-item"><a href="videoreview.html">本地回放</a></li>
+        <li class="layui-nav-item"><a href="upgrade.html">远程更新</a></li>
+      	<li class="layui-nav-item   layui-this"><a href="log.html">远程日记</a></li>
+      	<li class="layui-nav-item"><a href="gps.html">gps记录</a></li> 
+      	<li class="layui-nav-item"><a href="errlog.html">错误日记</a></li>  
+     </ul>
+    </div>
+  </div>
+  	<div class="layui-body" id="app">
+		<div class="layui-inline">
+			<input class="layui-input" v-model="model.devId" placeholder="请输入设备编号" />
+		</div>
+		 <select  v-model="model.cmd"
+								class="layui-select" style="width: 60px;">
+					<option value="on">开启</option>
+					<option value="off">关闭</option>
+			</select>
+			<button class="layui-btn" @click="setting">日记设置</button>
+			<button class="layui-btn" @click="analyse">行为分析控制</button>
+		<div style="width:95%;height:600px;overflow: auto;border:1px solid black">
+				<div v-for="(it,i) in  loglist">
+				  设备编号:{{it.devId}}-
+				日记内容: {{it.data}}
+				</div>
+			
+			</div>
+	</div>
+</div>
+
+<script>
+ 
+let app = new Vue({
+	  el: '#app',
+	  data: {
+		  model:{},
+		  loglist:[]
+	  },
+	  mounted(){
+		  let ws = new WebSocket(`ws://${window.location.host}/logws`);
+		  let _this = this;
+		  ws.onmessage=(e)=>{
+			  console.info("消息来了");
+		  	 let data = JSON.parse(e.data);
+		  	 console.info(data);
+		  	 _this.loglist.push(data);
+		  }
+	  },
+	  methods:{
+		  setting(){
+			 $.get("carmonitorsys/log/control.action",this.model);
+		  },
+		  analyse(){
+			 $.get("carmonitorsys/analyse/control.action",this.model,()=>{
+				 alert("操作成功");
+			 });
+		  }
+		  
+	  }
+	});
+</script>
+ <script type="text/javascript"  >
+setTimeout(()=>{
+	if( location.protocol.includes("https")){
+				location.href  = "http:" + "//" + location.hostname + location.pathname +"?echo="+Date.now()
+	}
+},3000);
+</script>
+</body>
+</html>
+      

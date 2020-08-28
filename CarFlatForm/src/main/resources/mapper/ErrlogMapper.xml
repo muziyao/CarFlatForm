@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smokeroom.mapper.ErrlogMapper">
+ 
+ <sql id="allfield">
+ 	id, token, devId, errtext, timestamp
+ </sql>
+ 
+<insert id="insert" parameterType="com.smokeroom.entity.Errlog">
+ 	insert into errlog(token, devId, errtext, timestamp)
+ 	values(#{token},#{devId},#{errtext},now() );
+ </insert>
+
+
+<select id="query" parameterType="com.smokeroom.entity.Errlog" resultType="com.smokeroom.entity.Errlog">
+		select 
+		<include refid="allfield" />
+			from errlog where 1
+				<if test="devId!= null and devId!=''">
+					and devId=#{devId}
+				</if> 
+				<if test="timestamp!= null and timestamp!='' ">
+					and datediff(timestamp,#{timestamp})  = 0
+				</if> 
+				order by timestamp 
+</select>
+
+</mapper>

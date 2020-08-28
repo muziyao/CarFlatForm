@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>车载系统后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+<!--   <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script> -->
+
+<style>
+  audio{
+  	margin-left:300px;
+  	margin-top:10px;
+  }
+</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item" ><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item   layui-this"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item"><a href="routems.html">路线管理</a></li>
+        <li class="layui-nav-item"><a href="routeexecute.html">路线运行</a></li>
+        <li class="layui-nav-item"><a href="videoreview.html">本地回放</a></li>
+        <li class="layui-nav-item"><a href="upgrade.html">远程更新</a></li>
+      	<li class="layui-nav-item"><a href="log.html">远程日记</a></li>
+      	<li class="layui-nav-item"><a href="gps.html">gps记录</a></li> 
+      	<li class="layui-nav-item"><a href="errlog.html">错误日记</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="layui-body" id="app">
+  
+    <div style="padding: 15px;height:100%;" id="containersds">
+    		<div>进来就打开。。。</div>
+			  <button onclick="startRecord()" class="layui-btn">呼叫车载主机</button> 
+			
+			<button onclick="stopRecord()" class="layui-btn">关闭语音对讲</button> 
+			<!-- <button onclick="restartRecord()" class="layui-btn">重新连接主机(请确保断开后再点击此按钮)</button> 
+			  -->
+			<br/>
+			<br/>
+			
+			
+			
+			<span id="voice_tips"></span>
+			
+    </div>
+  </div>
+</div>
+  <script type="text/javascript" src="jquery/jquery-3.4.1.min.js"></script>
+ <script type="text/javascript" src="pcm-player.js"></script>
+ <script type="text/javascript" src="speaktomyself.js"></script>
+
+</body>
+</html>

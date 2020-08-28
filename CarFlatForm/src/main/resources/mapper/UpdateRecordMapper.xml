@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smokeroom.mapper.UpdateRecordMapper">
+   
+    <select id="getAllUpdateRecord" resultType="UpdateRecord"  >
+    	select * from  updaterecord;
+    </select>
+    
+    <select id="getByDevId" resultType="UpdateRecord" parameterType="String">
+    	select * from updaterecord 
+    	where devId=#{devId}
+    </select>
+    
+    <insert id="insert" parameterType="UpdateRecord">
+    	insert into updaterecord(devId,upgrade,creation,version,hasContentLength)
+    	values(#{devId},#{upgrade},now(),#{version},#{hasContentLength})
+    </insert>
+    
+    <update id="update" parameterType="UpdateRecord">
+    	update 
+    		updaterecord 
+    			set 
+    				creation = now()
+    				<if test="upgrade!=null and upgrade!='' ">
+    					,upgrade=#{upgrade}
+    				</if>
+			    	<if test="version!=null and version!='' ">
+    					,version=#{version}
+    				</if>
+			    	<if test="carType!=null and carType!='' ">
+    					,carType=#{carType}
+    				</if>
+			    	<if test="hasContentLength!=null and hasContentLength!='' ">
+    					,hasContentLength=#{hasContentLength}
+    				</if>
+    				<if test="carNum!=null and carNum!='' ">
+    					,carNum=#{carNum}
+    				</if>
+    				<if test="detailinfo!=null and detailinfo!='' ">
+    					,detailinfo=#{detailinfo}
+    				</if>
+    	 	where 1 
+    	 	<if test="devId!=null and devId!=''">
+    	 		and devId=#{devId}  
+    	 	</if>
+		    	
+    </update>
+    
+	
+	<select id="getVersion" resultType="CurrentVersion">
+		select * from currentversion
+	</select>
+	<insert id="insertVersion" parameterType="CurrentVersion">
+		insert into currentversion(version,creation)
+		
+		values(#{version},now() )
+	</insert>
+	
+	<update id="updateVersion" parameterType="CurrentVersion">
+		update currentversion set version=#{version},creation=now()
+	</update>
+    
+</mapper>

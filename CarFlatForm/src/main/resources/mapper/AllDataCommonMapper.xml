@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smokeroom.mapper.AllDataCommonMapper">
+
+  <!-- -->
+   <insert id="insert" parameterType="CommonDataBean" 
+	   useGeneratedKeys="true" keyProperty="id" >
+	    insert into commondata
+	    (id,devId,lng,lat,timestamp,speed,imagestr,videostr,behavior,dataType)
+	    values
+	    (null,#{devId},#{lng},#{lat},#{timestamp},#{speed},#{imagestr},#{videostr},#{behavior},#{dataType})
+   </insert> 
+   
+   <select id="get" resultType="CommonDataBean">
+        select * from commondata 
+        where 1
+        <if test="dataType!= null and dataType!='' ">
+           and dataType=#{dataType}
+        </if>
+        order by id desc limit 0,30
+   </select> 
+   
+   
+    <select id="getByPage" resultType="CommonDataBean">
+        select * from commondata 
+        where 1
+        <if test="bean.dataType!= null and bean.dataType!='' ">
+           and dataType=#{bean.dataType}
+        </if>
+        order by id desc limit #{start},#{pageSize}
+   </select> 
+   
+   <select id="getByPageTotal" resultType="int" >
+        select count(0) as total from commondata 
+        where 1
+        <if test="bean.dataType!= null and bean.dataType!='' ">
+           and dataType=#{bean.dataType}
+        </if>
+   </select> 
+   
+</mapper>

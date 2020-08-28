@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>车载系统临时后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=U8sdm8dTbG5frQNg87IxYtY7OeEoyYOf"></script>
+  <script src="jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <script type="text/javascript" src="MapUtils.js"></script>
+  <script type="text/javascript" src="layui/layui.js"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统临时后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item" ><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item"><a href="routems.html">路线管理</a></li>
+        <li class="layui-nav-item"><a href="routeexecute.html">路线运行</a></li>
+        <li class="layui-nav-item"><a href="videoreview.html">本地回放</a></li>
+        <li class="layui-nav-item"><a href="upgrade.html">远程更新</a></li>
+      	<li class="layui-nav-item"><a href="log.html">远程日记</a></li>
+      	<li class="layui-nav-item  layui-this"><a href="gps.html">gps记录</a></li>
+      	<li class="layui-nav-item"><a href="errlog.html">错误日记</a></li>
+      </ul>
+    </div>
+  </div>
+  	<div class="layui-body" id="app">
+		<div class="layui-inline">
+			<input class="layui-input" v-model="model.devId" placeholder="请输入设备编号" />
+		</div>
+		<div class="layui-inline">
+	      <div class="layui-input-inline">
+	        <input type="text" class="layui-input" id="startdatetime" lay-verify="required" placeholder="开始时间：yyyy-MM-DD HH:mm:ss">
+	      </div>
+	    </div>
+	    <div class="layui-inline">
+	      <div class="layui-input-inline">
+	        <input type="text" class="layui-input" id="enddatetime" lay-verify="required" placeholder="结束时间：yyyy-MM-DD HH:mm:ss">
+	      </div>
+	    </div>
+		<button class="layui-btn" @click="query">查</button>
+		<button class="layui-btn" @click="showhidendb">{{showdb?"隐藏":"显示"}}数据库记录</button>
+			<button class="layui-btn" @click="showhidensrc">{{showsrc?"隐藏":"显示"}}原始数据</button>
+	<button class="layui-btn" @click="showInMap">地图显示</button>
+		<div>
+		     共{{gpslist.length}}条记录。温馨提示：后台限制最大查询2500条记录。请填写条件进行精确化查询。
+		   
+		  <div>
+		  		<div id="l-map"  style="width:100%;height:600px;" ></div>
+		  </div>
+		     
+			<div v-for="(gps,i) in gpslist" style="border:1px solid black;color:green;">
+				<div v-show="showdb">
+					数据库记录  devId:{{gps.devId}}  &nbsp;&nbsp;
+					lat:{{gps.lat}}  &nbsp;&nbsp;
+					lng:{{gps.lng}}	 &nbsp;&nbsp;
+					speed:{{gps.speed}}	 &nbsp;&nbsp;
+					时间:{{gps.timestamp}}	 &nbsp;&nbsp;
+				</div>
+				<div v-show="showsrc">
+					原始数据 {{gps.src}}<br/>
+					 GPS模块返回数据{{gps.gpsplain}}
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+ 
+let app = new Vue({
+	  el: '#app',
+	  data: {
+		  model:{},
+		  gpslist:[],
+		  showsrc:true,
+		  showdb:true
+	  },
+	  mounted(){
+		  this.initMap();
+	  },
+	  methods:{
+		  initMap(){
+			  this.map = new BMap.Map("l-map");
+			  this.map.enableScrollWheelZoom();
+			  console.info("执行。");
+			  let _this = this;
+			  layui.use(["element","laydate"], function(){
+				  	let laydate = layui.laydate;
+		            laydate.render({
+	                	elem: "#startdatetime" //指定元素
+	                	,type: 'datetime'
+	            		,done: function(value, date, endDate){
+	            			console.info(value);
+	            			_this.model.timestamp = value;
+	            	     }
+	           		});
+		            laydate.render({
+	                	elem: "#enddatetime" //指定元素
+	                	,type: 'datetime'
+	            		,done: function(value, date, endDate){
+	            			console.info(value);
+	            			_this.model.timestamp2 = value;
+	            	     }
+	           		});
+			});
+		  },
+		  addLabel(text,point){
+		  	var opts = {
+		  			  position : point,    // 指定文本标注所在的地理位置
+		  			  offset   : new BMap.Size(30, -30)    //设置文本偏移量
+		  			}
+		  	var label = new BMap.Label(text, opts);  // 创建文本标注对象
+		  		label.setStyle({
+		  			 fontSize : "16px",
+		  			 height : "20px",
+		  			 lineHeight : "16px"
+		  		 });
+		  	this.map.addOverlay(label); 
+		  },
+		  showInMap(){
+			  var options = {
+						size: BMAP_POINT_SIZE_SMALL,
+						shape: BMAP_POINT_SHAPE_STAR,
+						color: '#d340c3'
+					 }
+			 //渲染路线。
+			 let ps =[];
+			this.gpslist.map((p)=>{
+				//1 过滤
+				if(p.lng =="" || p.lng =="0" || p.lat =="" || p.lat =="0")return;
+			    p.lng = Number(p.lng);
+			    p.lat = Number(p.lat);
+				//2 转换。
+				 let rsp=BaiduAPIMap(p);
+				 ps.push( new BMap.Point(rsp.lng, rsp.lat )  );
+			 });
+			console.info(ps);
+			 if(ps.length>0){
+				 this.map.clearOverlays();
+				// var pointCollection = new BMap.PointCollection( ps, options);  // 初始化PointCollection
+				// this.map.addOverlay(pointCollection);  // 添加Overlay
+				this.addLabel("起点",ps[0]); 
+				 
+			  	var polyline = new BMap.Polyline( ps, {strokeColor:"blue", strokeWeight:3, strokeOpacity:0.5});  //创建多边形
+				this.map.addOverlay(polyline); 
+				this.addLabel("终点",ps[ ps.length -1 ]); 
+				 
+				 //将第一个点设置为视野区域。
+				  this.map.centerAndZoom( ps[0] , 16);
+			 }
+		  },
+		  showhidensrc(){
+			  this. showsrc = !this.showsrc;
+		  },
+		  showhidendb(){
+			  this. showdb = !this.showdb;
+		  },
+		  query(){
+			  let _this = this;
+			  console.info(this.model);
+			 $.get("carmonitorsys/gps/get.action",this.model,(rs)=>{
+				 console.info(rs);
+				 _this.gpslist = rs.data;
+			 });
+		  } 
+	  }
+	});
+</script>
+ <script type="text/javascript"  >
+setTimeout(()=>{
+	if( location.protocol.includes("https")){
+				location.href  = "http:" + "//" + location.hostname + location.pathname +"?echo="+Date.now()
+	}
+},3000);
+</script>
+</body>
+</html>
+      

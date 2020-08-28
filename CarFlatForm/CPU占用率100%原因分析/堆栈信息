@@ -1,0 +1,24 @@
+8556   5156
+0x216C     0x1424
+
+=========================
+"Thread-13" #40 prio=5 os_prio=0 tid=0x00000000224f3800 nid=0x216c runnable [0x0000000028c6f000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.read(SocketInputStream.java:141)
+	at java.net.SocketInputStream.read(SocketInputStream.java:127)
+	at com.smokeroom.service.MsgConnectionServiceImpl$2.run(MsgConnectionServiceImpl.java:133)
+
+   Locked ownable synchronizers:
+	- None
+	
+	
+===========================
+"Thread-10" #24 prio=5 os_prio=0 tid=0x000000001c16c800 nid=0x1424 runnable [0x0000000027e6e000]
+   java.lang.Thread.State: RUNNABLE
+	at java.net.SocketInputStream.read(SocketInputStream.java:141)
+	at java.net.SocketInputStream.read(SocketInputStream.java:127)
+	at com.smokeroom.service.VoiceServiceImpl$2.run(VoiceServiceImpl.java:151)
+
+   Locked ownable synchronizers:
+	- None
+

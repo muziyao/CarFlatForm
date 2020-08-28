@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>车载系统后台</title>
+  <link rel="stylesheet" href="layui/css/layui.css">
+  <script type="text/javascript" src="jquery/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=U8sdm8dTbG5frQNg87IxYtY7OeEoyYOf"></script>
+	<style type="text/css">
+		#l-map{height:600px;width:100%;}
+		#r-result{width:100%;}
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div  align="center" style="font-size:20px;color:white;padding-top:15px;">车载系统后台</div>
+  </div>
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item"><a href="index.html">车载监控</a></li>
+        <li class="layui-nav-item"><a href="analysis.html">行为分析</a></li>
+        <li class="layui-nav-item"><a href="soshelp.html">车载救援</a></li>
+        <li class="layui-nav-item"><a href="doorcheck.html">货箱门检测</a></li>
+        <li class="layui-nav-item"><a href="voice.html">对讲</a></li>
+        <li class="layui-nav-item layui-this"><a href="routems.html">路线管理</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="layui-body">
+    <div style="padding: 15px;">
+    
+		<div id="r-result"  >
+			<button class="layui-btn" onclick="limitspeed()">添加限速区域</button>
+			<button class="layui-btn" onclick="dangerarea()">添加禁止区域</button>
+			<button class="layui-btn" onclick="startOffset()">开启偏移量</button>
+			<button class="layui-btn" onclick="closeOffset()">关闭偏移量</button>
+			<button class="layui-btn" onclick="startRun()">开始模拟</button>
+			<button class="layui-btn" onclick="stopRun()">停止模拟</button>
+			<button class="layui-btn" onclick="restartRun()">重新模拟</button>
+			<button class="layui-btn" onclick="sendOutRun()">出发</button>
+			<button class="layui-btn" onclick="goBackRun()">返回</button>
+			<button class="layui-btn" onclick="addRunTime()">时间+</button>
+			<span id="time_show"></span>
+			<button class="layui-btn" onclick="subRunTime()">时间-</button>
+		</div>
+		 <div id="l-map"   ></div>
+    </div>
+  </div>
+</div>
+<script src="layui/layui.js"></script>
+<script type="text/javascript" src="service/route.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('element', function(){
+  var element = layui.element;
+
+});
+</script>
+</body>
+</html>
+
+      
